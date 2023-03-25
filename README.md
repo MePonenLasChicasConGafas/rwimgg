@@ -25,7 +25,7 @@ All credits of images to their respectful owners, thank you `waifu.pics` and `wa
 
 Deno does not require you to download anything (YAYYY) so just run this, add the `--nsfw` flag at the end to print out nsfw images.
 ```
-deno run --allow-all https://rawcdn.githack.com/MePonenLasChicasConGafas/RWIMGG/d47349ccd1a18623a0637118e72dca1c2d96fb31/rwimgg.deno.ts
+deno run --allow-all https://raw.githack.com/MePonenLasChicasConGafas/rwimgg/main/DENO/index.ts
 ```
 THERE MIGHT BE SOME ERRORS OF FILES NOT BEING SUPPORTED THAT IS NORMAL
 
