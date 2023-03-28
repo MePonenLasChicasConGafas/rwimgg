@@ -1,3 +1,4 @@
+#!/usr/bin/env -S deno run --allow-all
 // deno-lint-ignore-file prefer-const no-explicit-any
 import { printImage } from "https://x.nest.land/terminal_images@3.0.0/mod.ts"
 import { download } from "https://deno.land/x/download@v1.0.1/mod.ts"

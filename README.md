@@ -19,7 +19,13 @@ All credits of images to their respectful owners, thank you `waifu.pics` and `wa
 - [x] Python
 - [ ] Nim????
 
-## How to run
+Please suggest what languages for this script to be written in, or write this script in other languages.
+
+## How to run?
+
+obviously download the project to your machine, and run the scripts.
+
+The dates besides the names indicate their creation date.
 
 ### Deno [23/1/31]
 
@@ -38,4 +44,6 @@ Make sure that the terminal is a good size or else the image will be small.
 
 ### Python [22/??/??]
 
-To run use `python main.py` add the flag `--nsfw=true`, not really supported anymore
+To run use `python main.py` add the flag `--nsfw=true`.
+
+You might not have some libraries, so to install them run `pip install -r requirements.txt`

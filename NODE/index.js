@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import terminalImage from 'terminal-image'
 import chalk from 'chalk';
 
