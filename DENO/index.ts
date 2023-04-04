@@ -41,11 +41,6 @@ const DirExists = async (filename: string): Promise<boolean> => {
 
 const sample = (arr: Array<any>) => arr[Math.floor(Math.random() * arr.length)]
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
-const uuidv4 = () =>
-	("" + [1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (ch) => {
-		return (+ch ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +ch / 4)
-			.toString(16)
-	})
 const lastOf = (arr: Array<any>) => arr[arr.length - 1]
 
 //fetch image link
@@ -59,7 +54,7 @@ const link = JSONData.url ?? JSONData.images[0].url
 
 //filename
 let fileExtension = lastOf(link.split("."))
-const fileName = `${uuidv4()}.${fileExtension}`
+const fileName = `${crypto.randomUUID()}.${fileExtension}`
 
 //term columns
 const columns = Deno.consoleSize().columns
