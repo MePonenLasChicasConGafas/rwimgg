@@ -1,19 +1,16 @@
 {
     "fmt": {
-        "files": {
-            "include": [
-                "./index.ts"
-            ],
-            "exclude": [
-                "saved/",
-                ".vscode/"
-            ]
-        },
-        "options": {
-            "useTabs": true,
-            "singleQuote": false,
-            "semiColons": false
-        }
+        "useTabs": true,
+        "singleQuote": false,
+        "semiColons": false,
+        "include": [
+            "./mod.ts",
+            "./trytm.ts"
+        ],
+        "exclude": [
+            "saved/",
+            ".vscode/"
+        ]
     },
     "compilerOptions": {
         "checkJs": true
