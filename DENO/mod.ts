@@ -3,12 +3,13 @@
 import { printImage } from "https://x.nest.land/terminal_images@3.0.0/mod.ts"
 import { download } from "https://deno.land/x/download@v1.0.1/mod.ts"
 import * as Colors from "https://deno.land/std@0.175.0/fmt/colors.ts"
+import { trytm } from "./trytm.ts";
 
 Deno.addSignalListener("SIGINT", () => {
 	console.log("[SIGINT] Detected; Aborting program")
 })
 
-const isNsfw = Deno.args.find((str) => str == "--nsfw")
+const isNsfw = !!Deno.args.find((str) => str == "--nsfw")
 
 const urls = isNsfw
 	? [ //if true get nsfw
@@ -23,7 +24,8 @@ const urls = isNsfw
 		"https://api.waifu.im/search/?included_tags=oppai&is_nsfw=false",
 	]
 
-const DirExists = async (filename: string): Promise<boolean> => {
+// stolen from [https://stackoverflow.com/a/61868755]
+const exists = async (filename: string): Promise<boolean> => {
 	try {
 		await Deno.stat(filename)
 		// successful, file or directory must exist
@@ -39,15 +41,16 @@ const DirExists = async (filename: string): Promise<boolean> => {
 	}
 }
 
-const sample = (arr: Array<any>) => arr[Math.floor(Math.random() * arr.length)]
+const sample = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)]
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
-const lastOf = (arr: Array<any>) => arr[arr.length - 1]
+const lastOf = (arr: any[]) => arr[arr.length - 1]
 
-//fetch image link
+//fetch json, if err throw err
+const [JSONResponse, err] = await trytm(fetch(sample(urls)))
+if (err) throw Error('Couldn\'t fetch image')
 
-//const JSONResponse = await fetch(sample(urls))
-//                      V==JSONResponse
-const JSONData = await (await fetch(sample(urls))).json()
+//extract json data
+const JSONData = await (JSONResponse).json()
 
 //img link (regardless of source)
 const link = JSONData.url ?? JSONData.images[0].url
@@ -58,10 +61,11 @@ const fileName = `${crypto.randomUUID()}.${fileExtension}`
 
 //term columns
 const columns = Deno.consoleSize().columns
-;(async () => { //main function
-	if (!(await DirExists("./saved/"))) {
-		Deno.mkdir("saved")
-	} //if /saved/ dir does not exist create dir
+
+//main function
+;(async () => {
+	//if /saved/ dir does not exist create dir
+	if (!await exists("./saved/")) Deno.mkdir("saved")
 
 	await printImage({
 		path: link,
@@ -75,17 +79,17 @@ const columns = Deno.consoleSize().columns
 		const save = confirm(Colors.yellow("[?] Save image?")) //prompt to save image
 
 		//if (save == true) download
-		save && await download(link, {
-			dir: "./saved/",
-			file: fileName,
-		}).then(() => {
-			console.log(
-				Colors.green(`[✓] File saved successfully in ./saved/ as ${fileName}`),
-			)
-		})
+		if (save) {
+			const [_success, err] = await trytm(download(link, {
+				dir: "./saved/",
+				file: fileName
+			}))
+
+			if (!err) console.log(Colors.green(`[✓] File saved successfully in ./saved/ as ${fileName}`))
+			else throw Error(`Couldn\'t download image [${link}].`)
+		}
 	})
 })()
 
-//deno run --allow-all index.ts
-//https://files.catbox.moe/2ek3gr.ts
+//deno run --allow-all mod.ts
 //deno fmt
