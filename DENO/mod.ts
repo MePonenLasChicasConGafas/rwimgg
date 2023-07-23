@@ -11,7 +11,7 @@ Deno.addSignalListener("SIGINT", () => {
 
 const isNsfw = !!Deno.args.find((str) => str == "--nsfw")
 
-const urls = isNsfw
+const urls = (isNsfw
 	? [ //if true get nsfw
 		"https://api.waifu.pics/nsfw/waifu",
 		"https://api.waifu.pics/nsfw/neko",
@@ -22,7 +22,7 @@ const urls = isNsfw
 		"https://api.waifu.pics/sfw/neko",
 		"https://api.waifu.im/search/?included_tags=waifu&is_nsfw=false",
 		"https://api.waifu.im/search/?included_tags=oppai&is_nsfw=false",
-	]
+	])
 
 // stolen from [https://stackoverflow.com/a/61868755]
 const exists = async (filename: string): Promise<boolean> => {
