@@ -1,13 +1,15 @@
 #!/usr/bin/env -S deno run --allow-all
 // deno-lint-ignore-file prefer-const no-explicit-any
 import { printImage } from "https://x.nest.land/terminal_images@3.0.0/mod.ts"
-import { download } from "https://deno.land/x/download@v1.0.1/mod.ts"
+import { download } from "https://deno.land/x/download@v2.0.2/mod.ts";
 import * as Colors from "https://deno.land/std@0.175.0/fmt/colors.ts"
 import { trytm } from "./trytm.ts";
 
-Deno.addSignalListener("SIGINT", () => {
-	console.log("[SIGINT] Detected; Aborting program")
-})
+const log = console.log
+const sample = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)]
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+Deno.addSignalListener("SIGINT", () => log("[SIGINT] Detected; Aborting program"))
 
 const isNsfw = !!Deno.args.find((str) => str == "--nsfw")
 
@@ -28,41 +30,31 @@ const urls = (isNsfw
 const exists = async (filename: string): Promise<boolean> => {
 	try {
 		await Deno.stat(filename)
-		// successful, file or directory must exist
 		return true
 	} catch (error) {
 		if (error instanceof Deno.errors.NotFound) {
-			// file or directory does not exist
 			return false
-		} else {
-			// unexpected error, maybe permissions, pass it along
-			throw error
-		}
+		} else {throw error}
 	}
 }
 
-const sample = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)]
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
-const lastOf = (arr: any[]) => arr[arr.length - 1]
-
 //fetch json, if err throw err
-const [JSONResponse, err] = await trytm(fetch(sample(urls)))
+let rndURL = sample(urls)
+const [JSONResponse, err] = await trytm(fetch(rndURL))
 if (err) throw Error('Couldn\'t fetch image')
 
-//extract json data
+//extract json data and declare img link
 const JSONData = await (JSONResponse).json()
-
-//img link (regardless of source)
 const link = JSONData.url ?? JSONData.images[0].url
 
 //filename
-let fileExtension = lastOf(link.split("."))
-const fileName = `${crypto.randomUUID()}.${fileExtension}`
+let ext = link.split(".").at(-1)
+const fileName = `${crypto.randomUUID()}.${ext}`
 
 //term columns
-const columns = Deno.consoleSize().columns
+const {columns} = Deno.consoleSize()
 
-//main function
+//==MAIN FUNC===================================================================
 ;(async () => {
 	//if /saved/ dir does not exist create dir
 	if (!await exists("./saved/")) Deno.mkdir("saved")
@@ -73,8 +65,8 @@ const columns = Deno.consoleSize().columns
 	}).then(async () => {
 		await delay(1)
 
-		console.log(`\u{2500}`.repeat(columns)) //<hr>
-		console.log(`[!] Sauce/Image Link: ${Colors.blue(link)}`) //link
+		log(`\u{2500}`.repeat(columns)) //<hr>
+		log(`[!] Sauce/Image Link: ${Colors.blue(link)}`) //link
 
 		const save = confirm(Colors.yellow("[?] Save image?")) //prompt to save image
 
@@ -85,7 +77,7 @@ const columns = Deno.consoleSize().columns
 				file: fileName
 			}))
 
-			if (!err) console.log(Colors.green(`[✓] File saved successfully in ./saved/ as ${fileName}`))
+			if (!err) log(Colors.green(`[✓] File saved successfully in /saved/ as ${fileName}`))
 			else throw Error(`Couldn\'t download image [${link}].`)
 		}
 	})
