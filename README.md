@@ -18,6 +18,7 @@ All credits of images to their respectful owners, thank you `waifu.pics` and `wa
 - [x] Node
 - [x] Python
 - [ ] Nim????
+- [ ] ARDUINO????
 
 Please suggest what languages for this script to be written in, or write this script in other languages.
 
